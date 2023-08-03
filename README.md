@@ -20,8 +20,8 @@ Seu papel é construir uma RESTful API que permita:
 **IMPORTANTE: Sempre que a validação de uma requisição falhar, responda com código de erro e mensagem adequada à situação, ok?**
 
 **Exemplo:**
-
-```javascript
+ 
+`````javascript
 // Quando é informado um número de conta que não existe:
 // HTTP Status 404
 {
