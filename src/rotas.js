@@ -7,7 +7,8 @@ const {
     depositar, 
     sacar,
     transferir,
-    consultarSaldo} = require('./controladores/controloladores');
+    consultarSaldo,
+    extrato} = require('./controladores/controloladores');
 
 const rotas = express();
 
@@ -18,6 +19,7 @@ rotas.delete('/contas/:numeroConta', excluirConta);
 rotas.post(`/transacoes/depositar`, depositar);
 rotas.post(`/transacoes/sacar`, sacar);
 rotas.post(`/transacoes/transferir`, transferir);
-rotas.get(`/saldo?numero_conta=123&senha=123`, consultarSaldo);
+rotas.get(`/contas/saldo`, consultarSaldo);
+rotas.get(`/contas/extrato`, extrato);
 
 module.exports = rotas;
