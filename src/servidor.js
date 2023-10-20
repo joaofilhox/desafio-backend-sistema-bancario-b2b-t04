@@ -1,7 +1,7 @@
 const express = require('express');
 const rotas = require('./rotas');
 
-const {validarSenha} = require('./intermediarios');
+const {validarSenha} = require('./controladores/controloladores');
 
 const app = express();
 

@@ -1,47 +1,61 @@
-let { contas, saques, depositos, transferencias } = require('../bancodedados');
-let numeroDaConta = 1;
+let { contas, saques, depositos, transferencias, banco } = require('../bancodedados')
+let numeroDaConta = 1
+
+const validarSenha = (req, res, next) => {
+    const { senha_banco } = req.query
+    
+    if (!senha_banco) {
+        return res.status(401).json({ mensagem: 'A senha não foi informada' })
+    }
+
+    if (senha_banco !== banco.senha) {
+        return res.status(401).json({ mensagem: 'A senha está incorreta' })
+    }
+
+    return next()
+}
 
 const contasBancariasExistentes = (req, res) => {
 
-    return res.status(200).json(contas);
-};
+    return res.status(200).json(contas)
+}
 
 const criarContaBancaria = (req, res) => {
-    let { nome, cpf, data_nascimento, telefone, email, senha } = req.body;
+    let { nome, cpf, data_nascimento, telefone, email, senha } = req.body
 
-    const cpfExists = contas.some(conta => conta.usuario.cpf === cpf);
-    const emailExists = contas.some(conta => conta.usuario.email === email);
+    const cpfExiste = contas.some(conta => conta.usuario.cpf === cpf)
+    const emailExiste = contas.some(conta => conta.usuario.email === email)
 
-    if (cpfExists) {
-        return res.status(400).json({ mensagem: 'CPF já existe' });
+    if (cpfExiste) {
+        return res.status(400).json({ mensagem: 'CPF já existe' })
     }
 
-    if (emailExists) {
-        return res.status(400).json({ mensagem: 'Email já existe' });
+    if (emailExiste) {
+        return res.status(400).json({ mensagem: 'Email já existe' })
     }
 
     if (!nome) {
-        return res.status(400).json({ mensagem: 'O campo nome é obrigatório' });
+        return res.status(400).json({ mensagem: 'O campo nome é obrigatório' })
     }
 
     if (!cpf) {
-        return res.status(400).json({ mensagem: 'O campo CPF é obrigatório' });
+        return res.status(400).json({ mensagem: 'O campo CPF é obrigatório' })
     }
 
     if (!data_nascimento) {
-        return res.status(400).json({ mensagem: 'O campo data de nascimento é obrigatório' });
+        return res.status(400).json({ mensagem: 'O campo data de nascimento é obrigatório' })
     }
 
     if (!telefone) {
-        return res.status(400).json({ mensagem: 'O campo telefone é obrigatório' });
+        return res.status(400).json({ mensagem: 'O campo telefone é obrigatório' })
     }
 
     if (!email) {
-        return res.status(400).json({ mensagem: 'O campo email é obrigatório' });
+        return res.status(400).json({ mensagem: 'O campo email é obrigatório' })
     }
 
     if (!senha) {
-        return res.status(400).json({ mensagem: 'O campo senha é obrigatório' });
+        return res.status(400).json({ mensagem: 'O campo senha é obrigatório' })
     }
 
     const novaContaBancaria = {
@@ -55,107 +69,107 @@ const criarContaBancaria = (req, res) => {
             email,
             senha
         }
-    };
+    }
 
-    contas.push(novaContaBancaria);
+    contas.push(novaContaBancaria)
 
-    return res.status(201).json(novaContaBancaria);
-};
+    return res.status(201).json(novaContaBancaria)
+}
 
 const atualizarUsuarioDaConta = (req, res) => {
-    const { nome, cpf, data_nascimento, telefone, email, senha } = req.body;
-    let contador = true;
+    const { nome, cpf, data_nascimento, telefone, email, senha } = req.body
+    let contador = true
 
-    const usuarioExistente = contas.find(conta => conta.numero === Number(req.params.numeroConta));
+    const usuarioExistente = contas.find(conta => conta.numero === Number(req.params.numeroConta))
 
     if (!usuarioExistente) {
-        return res.status(404).json({ mensagem: 'Conta não encontrada' });
+        return res.status(404).json({ mensagem: 'Conta não encontrada' })
     }
 
-    const cpfExists = contas.some(conta => conta.usuario.cpf === cpf);
-    const emailExists = contas.some(conta => conta.usuario.email === email);
+    const cpfExiste = contas.some(conta => conta.usuario.cpf === cpf)
+    const emailExiste = contas.some(conta => conta.usuario.email === email)
 
-    if (cpfExists) {
-        return res.status(400).json({ mensagem: 'CPF já existe' });
+    if (cpfExiste) {
+        return res.status(400).json({ mensagem: 'CPF já existe' })
     }
 
-    if (emailExists) {
-        return res.status(400).json({ mensagem: 'Email já existe' });
+    if (emailExiste) {
+        return res.status(400).json({ mensagem: 'Email já existe' })
     }
 
     if (nome) {
-        usuarioExistente.usuario.nome = nome;
-        contador = false;
+        usuarioExistente.usuario.nome = nome
+        contador = false
     }
 
     if (cpf) {
-        usuarioExistente.usuario.cpf = cpf;
-        contador = false;
+        usuarioExistente.usuario.cpf = cpf
+        contador = false
     }
 
     if (data_nascimento) {
-        usuarioExistente.usuario.data_nascimento = data_nascimento;
-        contador = false;
+        usuarioExistente.usuario.data_nascimento = data_nascimento
+        contador = false
     }
 
     if (telefone) {
-        usuarioExistente.usuario.telefone = telefone;
-        contador = false;
+        usuarioExistente.usuario.telefone = telefone
+        contador = false
     }
 
     if (email) {
-        usuarioExistente.usuario.email = email;
-        contador = false;
+        usuarioExistente.usuario.email = email
+        contador = false
     }
 
     if (senha) {
-        usuarioExistente.usuario.senha = senha;
-        contador = false;
+        usuarioExistente.usuario.senha = senha
+        contador = false
 
     }
 
     if (contador) {
-        return res.status(400).json({ mensagem: 'Nenhuma propriedade foi passada' });
+        return res.status(400).json({ mensagem: 'Nenhuma propriedade foi passada' })
     }
 
-    return res.status(200).json({ mensagem: 'Conta atualizado com sucesso' });
+    return res.status(200).json({ mensagem: 'Conta atualizado com sucesso' })
 
-};
+}
 
 const excluirConta = (req, res) => {
-    const { numeroConta } = req.params;
+    const { numeroConta } = req.params
 
-    const conta = contas.find((conta) => conta.numero === Number(numeroConta));
+    const conta = contas.find((conta) => conta.numero === Number(numeroConta))
 
     if (!conta) {
-        return res.status(404).json({ mensagem: 'Conta não encontrada' });
+        return res.status(404).json({ mensagem: 'Conta não encontrada' })
     }
 
     if (conta.saldo !== 0) {
-        return res.status(400).json({ mensagem: 'Não é permitido excluir conta que possua saldo em conta' });
+        return res.status(400).json({ mensagem: 'Não é permitido excluir conta que possua saldo em conta' })
     }
 
-    contas = contas.filter((conta) => conta.numero !== Number(numeroConta));
+    contas = contas.filter((conta) => conta.numero !== Number(numeroConta))
 
-    return res.status(200).json({ mensagem: 'Conta excluída com sucesso.' });
-};
+    return res.status(200).json({ mensagem: 'Conta excluída com sucesso.' })
+}
 
 const depositar = (req, res) => {
-    const { numero_conta, valor } = req.body;
+    const { numero_conta, valor } = req.body
 
-    const conta = contas.find((conta) => conta.numero === Number(numero_conta));
+    const conta = contas.find((conta) => conta.numero === Number(numero_conta))
 
     if (!conta) {
-        return res.status(404).json({ mensagem: 'Conta não encontrada' });
+        return res.status(404).json({ mensagem: 'Conta não encontrada' })
     }
 
     if (isNaN(Number(valor)) || Number(valor) <= 0) {
-        return res.status(404).json({ mensagem: 'Valor não é valido' });
+        return res.status(404).json({ mensagem: 'Valor não é valido' })
     }
 
-    conta.saldo += Number(valor);
-    const dataAtual = new Date();
-    const dataFormatada = dataAtual.toISOString().replace('T', ' ').substr(0, 19);
+    conta.saldo += Number(valor)
+    const dataAtual = new Date()
+    const dataFormatada = dataAtual.toISOString().replace('T', ' ').substr(0, 19)
 
     const novoDeposito = {
         data: dataFormatada,
@@ -163,36 +177,36 @@ const depositar = (req, res) => {
         valor: valor
     }
 
-    depositos.push(novoDeposito);
+    depositos.push(novoDeposito)
 
     return res.status(200).json({ mensagem: 'Depósito realizado com sucesso' })
 
-};
+}
 
 const sacar = (req, res) => {
-    const { numero_conta, valor, senha } = req.body;
+    const { numero_conta, valor, senha } = req.body
 
-    const conta = contas.find((conta) => conta.numero === Number(numero_conta));
+    const conta = contas.find((conta) => conta.numero === Number(numero_conta))
 
     if (!conta) {
-        return res.status(404).json({ mensagem: 'Conta não encontrada' });
+        return res.status(404).json({ mensagem: 'Conta não encontrada' })
     }
 
     if (isNaN(Number(valor)) || Number(valor) <= 0) {
-        return res.status(404).json({ mensagem: 'Valor não é valido' });
+        return res.status(404).json({ mensagem: 'Valor não é valido' })
     }
 
     if (senha !== conta.usuario.senha) {
-        return res.status(404).json({ mensagem: 'Senha invalida' });
+        return res.status(404).json({ mensagem: 'Senha invalida' })
     }
 
     if (isNaN(Number(valor)) || Number(valor) > conta.saldo) {
-        return res.status(404).json({ mensagem: 'Valor de saque é maior que o saldo da conta não é permitido saque' });
+        return res.status(404).json({ mensagem: 'Valor de saque é maior que o saldo da conta não é permitido saque' })
     }
 
-    conta.saldo = (conta.saldo - valor);
-    const dataAtual = new Date();
-    const dataFormatada = dataAtual.toISOString().replace('T', ' ').substr(0, 19);
+    conta.saldo = (conta.saldo - valor)
+    const dataAtual = new Date()
+    const dataFormatada = dataAtual.toISOString().replace('T', ' ').substr(0, 19)
 
     const novoSaque = {
         data: dataFormatada,
@@ -200,38 +214,41 @@ const sacar = (req, res) => {
         valor: valor
     }
 
-    saques.push(novoSaque);
+    saques.push(novoSaque)
 
     return res.status(200).json({ mensagem: 'Saque realizado com sucesso' })
-};
+}
 
 const transferir = (req, res) => {
-    const { numero_conta_origem, numero_conta_destino, valor, senha } = req.body;
+    const { numero_conta_origem, numero_conta_destino, valor, senha } = req.body
 
-    const contaOrigem = contas.find((conta) => conta.numero === Number(numero_conta_origem));
-    const contaDestino = contas.find((conta) => conta.numero === Number(numero_conta_destino));
+    const contaOrigem = contas.find((conta) => conta.numero === Number(numero_conta_origem))
+    const contaDestino = contas.find((conta) => conta.numero === Number(numero_conta_destino))
 
     if (!contaOrigem) {
-        return res.status(404).json({ mensagem: 'Numero da conta de origem não existe.' });
+        return res.status(404).json({ mensagem: 'Numero da conta de origem não existe.' })
     }
 
     if (!contaDestino) {
-        return res.status(404).json({ mensagem: 'Numero da conta de detino não existe.' });
+        return res.status(404).json({ mensagem: 'Numero da conta de detino não existe.' })
     }
 
     if (senha !== contaOrigem.usuario.senha) {
-        return res.status(404).json({ mensagem: 'Senha invalida' });
+        return res.status(404).json({ mensagem: 'Senha invalida' })
+    }
+  
+    if (!valor) {
+        return res.status(404).json({ mensagem: 'Valor não informado' })
+    }
+    
+    if (Number(valor) > contaOrigem.saldo) {
+        return res.status(404).json({ mensagem: 'Tranferencia maior que o saldo da conta não é permitido' })
     }
 
-
-    if (isNaN(Number(valor)) || Number(valor) > contaOrigem.saldo) {
-        return res.status(404).json({ mensagem: 'Tranferencia maior que o saldo da conta não é permitido' });
-    }
-
-    contaOrigem.saldo = (contaOrigem.saldo - valor);
-    contaDestino.saldo = (contaDestino.saldo + valor);
-    const dataAtual = new Date();
-    const dataFormatada = dataAtual.toISOString().replace('T', ' ').substr(0, 19);
+    contaOrigem.saldo = (contaOrigem.saldo - valor)
+    contaDestino.saldo = (contaDestino.saldo + valor)
+    const dataAtual = new Date()
+    const dataFormatada = dataAtual.toISOString().replace('T', ' ').substr(0, 19)
 
     const transferencia = {
         data: dataFormatada,
@@ -240,21 +257,21 @@ const transferir = (req, res) => {
         valor: valor
     }
 
-    transferencias.push(transferencia);
+    transferencias.push(transferencia)
 
     return res.status(200).json({ mensagem: 'Transferência realizado com sucesso' })
 
 
-};
+}
 
 const consultarSaldo = (req, res) => {
-    const { numero_conta, senha } = req.query;
+    const { numero_conta, senha } = req.query
 
     if (!numero_conta || !senha) {
         return res.status(404).json({ mensagem: 'O número da conta ou senha não foi informado' })
     }
 
-    const conta = contas.find((conta) => conta.numero === Number(numero_conta));
+    const conta = contas.find((conta) => conta.numero === Number(numero_conta))
 
 
     if (!conta) {
@@ -269,18 +286,18 @@ const consultarSaldo = (req, res) => {
         saldo: conta.saldo
     }
 
-    return res.status(200).json(saldoDaConta);
+    return res.status(200).json(saldoDaConta)
 
-};
+}
 
 const extrato = (req, res) => {
-    const { numero_conta, senha } = req.query;
+    const { numero_conta, senha } = req.query
 
     if (!numero_conta || !senha) {
         return res.status(404).json({ mensagem: 'O número da conta ou senha não foi informado' })
     }
 
-    const conta = contas.find((conta) => conta.numero === Number(numero_conta));
+    const conta = contas.find((conta) => conta.numero === Number(numero_conta))
 
 
     if (!conta) {
@@ -291,9 +308,9 @@ const extrato = (req, res) => {
         return res.status(404).json({ mensagem: 'Senha invalida' })
     }
 
-    const depositosDaConta = depositos.filter((deposito) => deposito.numero_conta == Number(numero_conta));
-    const saquesDaConta = saques.filter((saque) => saque.numero_conta == numero_conta);
-    const transferenciasDaConta = transferencias.filter((transferencia) => transferencia.numero_conta_origem == numero_conta);
+    const depositosDaConta = depositos.filter((deposito) => deposito.numero_conta == Number(numero_conta))
+    const saquesDaConta = saques.filter((saque) => saque.numero_conta == numero_conta)
+    const transferenciasDaConta = transferencias.filter((transferencia) => transferencia.numero_conta_origem == numero_conta)
 
     const extratoDaConta = {
         depositos: depositosDaConta,
@@ -301,8 +318,8 @@ const extrato = (req, res) => {
         transferencias: transferenciasDaConta
     }
 
-    return res.status(200).json(extratoDaConta);
-};
+    return res.status(200).json(extratoDaConta)
+}
 
 module.exports = {
     contasBancariasExistentes,
@@ -313,5 +330,6 @@ module.exports = {
     sacar,
     transferir,
     consultarSaldo,
-    extrato
-};
+    extrato,
+    validarSenha
+}
